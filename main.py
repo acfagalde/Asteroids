@@ -2,21 +2,33 @@ import pygame # type: ignore
 from constants import *
 from player import *
 from CircleShape import *
+from asteroid import *
+from asteroidfield import *
 
 def main():
     pygame.init()
     framerate = pygame.time.Clock()
     dt = 0
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    updateable = pygame.sprite.Group()
+    drawable = pygame.sprite.Group()
+    asteroids = pygame.sprite.Group()
+
+    Player.containers = (updateable, drawable)
+    Asteroid.containers = (asteroids, updateable, drawable)
+    AsteroidField.containers = (updateable)
+
     player1 = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
+    basefield = AsteroidField()
 
     while screen != None:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return
         pygame.Surface.fill(screen, (0,0,0))
-        player1.draw(screen)
-        player1.update(dt)
+        for item in drawable:
+            item.draw(screen)
+        updateable.update(dt)
         pygame.display.flip()
         dt = framerate.tick(60)/1000
 
